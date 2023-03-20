@@ -58,6 +58,9 @@ constexpr uint8_t kDataStatusBits = 5;
 // system properties
 const std::string kLeRxPathLossCompProperty = "bluetooth.hardware.radio.le_rx_path_loss_comp_db";
 
+bool kDisableApcfExtendedFeatures = false;
+static const std::string kPropertyDisableApcfExtendedFeatures = "bluetooth.le.disable_apcf_extended_features";
+
 const ModuleFactory LeScanningManager::Factory = ModuleFactory([]() { return new LeScanningManager(); });
 
 enum class ScanApiType {
@@ -199,7 +202,9 @@ struct LeScanningManager::impl : public LeAddressManagerCallback {
       api_type_ = ScanApiType::LEGACY;
     }
     is_filter_supported_ = controller_->IsSupported(OpCode::LE_ADV_FILTER);
-    if (is_filter_supported_) {
+    if (os::GetSystemProperty(kPropertyDisableApcfExtendedFeatures) == "1")
+      kDisableApcfExtendedFeatures = true;
+    if (is_filter_supported_ && !kDisableApcfExtendedFeatures) {
       le_scanning_interface_->EnqueueCommand(
           LeAdvFilterReadExtendedFeaturesBuilder::Create(),
           module_handler_->BindOnceOn(this, &impl::on_apcf_read_extended_features_complete));
