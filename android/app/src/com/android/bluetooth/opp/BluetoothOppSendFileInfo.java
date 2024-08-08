@@ -126,6 +126,16 @@ public class BluetoothOppSendFileInfo {
                 return SEND_FILE_INFO_ERROR;
             }
 
+            if (isContentUriForOtherUser(uri)) {
+                Log.e(TAG, "Uri: " + uri + " is invalid for user " + myUserId());
+                ContentProfileErrorReportUtils.report(
+                        BluetoothProfile.OPP,
+                        BluetoothProtoEnums.BLUETOOTH_OPP_SEND_FILE_INFO,
+                        BluetoothStatsLog.BLUETOOTH_CONTENT_PROFILE_ERROR_REPORTED__TYPE__LOG_ERROR,
+                        15);
+                return SEND_FILE_INFO_ERROR;
+            }
+
             contentType = contentResolver.getType(uri);
             Cursor metadataCursor;
             try {
