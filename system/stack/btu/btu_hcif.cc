@@ -45,6 +45,7 @@
 #include "stack/include/ble_hci_link_interface.h"
 #include "stack/include/bt_hdr.h"
 #include "stack/include/btm_iso_api.h"
+#include "stack/btm/btm_sec.h"
 #include "stack/include/btu.h"
 #include "stack/include/dev_hci_link_interface.h"
 #include "stack/include/gatt_api.h"
@@ -887,8 +888,6 @@ static void btu_hcif_rmt_name_request_comp_evt(const uint8_t* p,
   btm_sec_rmt_name_request_complete(&bd_addr, p, to_hci_status_code(status));
 }
 
-constexpr uint8_t MIN_KEY_SIZE = 7;
-
 static void read_encryption_key_size_complete_after_encryption_change(uint8_t status, uint16_t handle,
                                                                       uint8_t key_size) {
   if (status == HCI_ERR_INSUFFCIENT_SECURITY) {
@@ -907,7 +906,7 @@ static void read_encryption_key_size_complete_after_encryption_change(uint8_t st
     return;
   }
 
-  if (key_size < MIN_KEY_SIZE) {
+  if (key_size < btm_sec_get_min_enc_key_size()) {
     LOG(ERROR) << __func__ << " encryption key too short, disconnecting. handle: " << loghex(handle)
                << " key_size: " << +key_size;
 
@@ -1506,7 +1505,7 @@ static void read_encryption_key_size_complete_after_key_refresh(uint8_t status, 
     return;
   }
 
-  if (key_size < MIN_KEY_SIZE) {
+  if (key_size < btm_sec_get_min_enc_key_size()) {
     LOG(ERROR) << __func__ << " encryption key too short, disconnecting. handle: " << loghex(handle)
                << " key_size: " << +key_size;
 

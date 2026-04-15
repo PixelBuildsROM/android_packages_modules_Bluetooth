@@ -5330,3 +5330,8 @@ void BTM_update_version_info(const RawAddress& bd_addr,
 
   p_dev_rec->remote_version_info = remote_version_info;
 }
+
+uint8_t btm_sec_get_min_enc_key_size() {
+  static uint8_t min_key_size = MIN_KEY_SIZE_DEFAULT;
+  return min_key_size;
+}
