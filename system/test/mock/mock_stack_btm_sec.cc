@@ -324,3 +324,8 @@ void btm_sec_update_session_key_size(uint16_t hci_handle, uint8_t key_size) {
 void btm_simple_pair_complete(const uint8_t* p) {
   inc_func_call_count(__func__);
 }
+uint8_t btm_sec_get_min_enc_key_size() {
+  inc_func_call_count(__func__);
+  return MIN_KEY_SIZE_DEFAULT;
+}
+

@@ -35,6 +35,10 @@
 
 #define BTM_SEC_MAX_COLLISION_DELAY (5000)
 
+constexpr uint8_t MIN_KEY_SIZE = 7;
+constexpr uint8_t MIN_KEY_SIZE_DEFAULT = MIN_KEY_SIZE;
+constexpr uint8_t MAX_KEY_SIZE = 16;
+
 /*******************************************************************************
  *             L O C A L    F U N C T I O N     P R O T O T Y P E S            *
  ******************************************************************************/
@@ -547,7 +551,7 @@ void btm_io_capabilities_rsp(const uint8_t* p);
  * Returns          void
  *
  ******************************************************************************/
-void btm_proc_sp_req_evt(tBTM_SP_EVT event, uint8_t* p);
+void btm_proc_sp_req_evt(tBTM_SP_EVT event, const uint8_t* p);
 
 /*******************************************************************************
  *
@@ -811,6 +815,17 @@ bool btm_sec_is_session_key_size_downgrade(uint16_t hci_handle,
  *
  ******************************************************************************/
 void btm_sec_update_session_key_size(uint16_t hci_handle, uint8_t key_size);
+
+/*******************************************************************************
+ *
+ * Function         btm_sec_get_min_enc_key_size
+ *
+ * Description      Get the minimum encryption key size allowed by the system.
+ *
+ * Returns          The minimum encryption key size.
+ *
+ ******************************************************************************/
+uint8_t btm_sec_get_min_enc_key_size();
 
 // Return DEV_CLASS (uint8_t[3]) of bda. If record doesn't exist, create one.
 const uint8_t* btm_get_dev_class(const RawAddress& bda);
