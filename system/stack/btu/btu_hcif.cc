@@ -46,6 +46,7 @@
 #include "stack/include/bt_hdr.h"
 #include "stack/include/btm_iso_api.h"
 #include "stack/btm/btm_sec.h"
+#include "stack/btm/btm_dev.h"
 #include "stack/include/btu.h"
 #include "stack/include/dev_hci_link_interface.h"
 #include "stack/include/gatt_api.h"
@@ -972,6 +973,12 @@ static void btu_hcif_encryption_change_evt(uint8_t* p) {
     btm_sec_encrypt_change(handle, static_cast<tHCI_STATUS>(status),
                            encr_enable);
   } else {
+    // CTKD request from the remote central device will get rejected if the link is "not"
+    // encrypted. So we should mark the link as encrypted immediately.
+    tBTM_SEC_DEV_REC* p_dev_rec = btm_find_dev_by_handle(handle);
+    if (p_dev_rec != nullptr) {
+      p_dev_rec->set_device_encrypted();
+    }
     btsnd_hcic_read_encryption_key_size(
         handle,
         base::Bind(&read_encryption_key_size_complete_after_encryption_change));
